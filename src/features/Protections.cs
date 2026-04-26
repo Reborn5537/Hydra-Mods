@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Hazel;
 using InnerNet;
 
 namespace HydraMenu.features
@@ -57,6 +58,43 @@ namespace HydraMenu.features
 			}
 		}
 		*/
+
+		[HarmonyPatch(typeof(MessageReader), nameof(MessageReader.ReadPackedUInt32))]
+		public static class HardenedReadPackedUInt
+		{
+			public static bool Enabled { get; set; } = true;
+
+			static bool Prefix(MessageReader __instance, ref uint __result)
+			{
+				if(!Enabled) return true;
+
+				bool readMore = true;
+				int shift = 0;
+				uint output = 0;
+
+				while(readMore)
+				{
+					if(__instance.BytesRemaining < 1) break;
+
+					byte b = __instance.ReadByte();
+					if(b >= 0x80)
+					{
+						readMore = true;
+						b ^= 0x80;
+					}
+					else
+					{
+						readMore = false;
+					}
+
+					output |= (uint)(b << shift);
+					shift += 7;
+				}
+
+				__result = output;
+				return false;
+			}
+		}
 
 		[HarmonyPatch(typeof(VoteBanSystem), nameof(VoteBanSystem.AddVote))]
 		public static class Votekicks
