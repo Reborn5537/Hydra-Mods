@@ -109,6 +109,14 @@ namespace HydraMenu.anticheat.rpc
 				Hydra.Log.LogInfo($"Blocked switch update from {player.Data.PlayerName} as lights are not currently sabotaged");
 				blockRpc = true;
 			}
+
+			// False positives may be possible if a player is toggling light switches before their client recieves the StartMeeting RPC so we silent flag
+			// Maybe we can check too see what state the meeting is in, and if its after the meeting was animated then flag the player?
+			if(MeetingHud.Instance)
+			{
+				Hydra.Log.LogInfo($"Blocked switch update from {player.Data.PlayerName} as there is a currently active meeting");
+				blockRpc = true;
+			}
 		}
 
 		public override RpcCalls GetRpcCall()
