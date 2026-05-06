@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using InnerNet;
 
 namespace HydraMenu.features
 {
@@ -74,7 +75,7 @@ namespace HydraMenu.features
 			}
 		}
 
-		[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.DisconnectInternal))]
+		[HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.DisconnectInternal))]
 		class OnDisconnect
 		{
 			static void Prefix()
