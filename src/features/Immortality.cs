@@ -35,22 +35,18 @@ namespace HydraMenu.features
 			{
 				if(value == _enabled) return;
 
-				if(ShipStatus.Instance == null)
+				if(PlayerControl.LocalPlayer != null && !PlayerControl.LocalPlayer.inVent)
 				{
-					Hydra.notifications.Send("Immortality", "This option can only be enabled when you are inside a game.");
-					return;
-				}
-
-				if(value && !PlayerControl.LocalPlayer.inVent)
-				{
-					Hydra.Log.LogInfo("Immortality was enabled, sending a VentilationSystem update with operation Enter");
-					VentilationSystem.Update(VentilationSystem.Operation.Enter, CUSTOM_VENT_ID);
-				}
-
-				if(!value && !PlayerControl.LocalPlayer.inVent)
-				{
-					Hydra.Log.LogInfo("Immortality was disabled, sending a VentilationSystem update with operation Exit");
-					VentilationSystem.Update(VentilationSystem.Operation.Exit, CUSTOM_VENT_ID);
+					if(value)
+					{
+						Hydra.Log.LogInfo("Immortality was enabled, sending a VentilationSystem update with operation Enter");
+						VentilationSystem.Update(VentilationSystem.Operation.Enter, CUSTOM_VENT_ID);
+					}
+					else
+					{
+						Hydra.Log.LogInfo("Immortality was disabled, sending a VentilationSystem update with operation Exit");
+						VentilationSystem.Update(VentilationSystem.Operation.Exit, CUSTOM_VENT_ID);
+					}
 				}
 
 				_enabled = value;
@@ -62,7 +58,7 @@ namespace HydraMenu.features
 		{
 			static bool Prefix(VentilationSystem.Operation op, int ventId)
 			{
-				if(ventId != CUSTOM_VENT_ID && _enabled && (op == VentilationSystem.Operation.Enter || op == VentilationSystem.Operation.Exit || op == VentilationSystem.Operation.Move))
+				if(ventId != CUSTOM_VENT_ID && Enabled && (op == VentilationSystem.Operation.Enter || op == VentilationSystem.Operation.Exit || op == VentilationSystem.Operation.Move))
 				{
 					// Hydra.Log.LogInfo($"Our client send VentilationSystem operation {op} for vent {ventId}. Resending Immortality RPC");
 					// VentilationSystem.Update(VentilationSystem.Operation.Enter, CUSTOM_VENT_ID);
@@ -75,12 +71,15 @@ namespace HydraMenu.features
 			}
 		}
 
-		[HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.DisconnectInternal))]
-		class OnDisconnect
+		[HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Awake))]
+		class OnShipStatusCreate
 		{
 			static void Prefix()
 			{
-				_enabled = false;
+				if(!Enabled) return;
+
+				Hydra.Log.LogMessage($"A new instance of ShipStatus has spawned, sending the immortality RPC");
+				VentilationSystem.Update(VentilationSystem.Operation.Enter, CUSTOM_VENT_ID);
 			}
 		}
 
@@ -101,7 +100,7 @@ namespace HydraMenu.features
 		{
 			static void Postfix()
 			{
-				if(!Enabled || !PlayerControl.LocalPlayer.Data.IsDead) return;
+				if(!Enabled || PlayerControl.LocalPlayer.Data.IsDead) return;
 
 				Hydra.Log.LogInfo("Meeting has ended, resending Immortality RPC to retain immortal status");
 				VentilationSystem.Update(VentilationSystem.Operation.Enter, CUSTOM_VENT_ID);
