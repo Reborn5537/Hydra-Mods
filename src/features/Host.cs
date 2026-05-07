@@ -1,5 +1,7 @@
-﻿using HarmonyLib;
+﻿using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
+using Il2CppSystem.Collections.Generic;
 using InnerNet;
 using UnityEngine.AddressableAssets;
 
@@ -150,6 +152,54 @@ namespace HydraMenu.features
 			static bool Prefix()
 			{
 				return !Enabled;
+			}
+		}
+
+		[HarmonyPatch(typeof(LogicRoleSelectionNormal), nameof(LogicRoleSelectionNormal.AssignRolesFromList))]
+		public static class AlwaysImposter
+		{
+			public static bool Enabled { get; set; } = false;
+			public static RoleTypes assignedRole = RoleTypes.Viper;
+
+			// Make sure List<T> is imported from Il2cppSystem otherwise this will not work!
+			static void Prefix(ref List<NetworkedPlayerInfo> players, ref List<RoleTypes> roleList, ref int rolesAssigned)
+			{
+				if(!Enabled || !AmongUsClient.Instance.AmHost) return;
+
+				Hydra.Log.LogInfo($"Attempting to assign ourselves the {assignedRole} role");
+
+				// Stupid shenanagians to deal with il2cpp interop
+				Il2CppSystem.Predicate<NetworkedPlayerInfo> predicate = (Il2CppSystem.Predicate<NetworkedPlayerInfo>)(player => player == PlayerControl.LocalPlayer.Data);
+				int playerIndex = players.FindIndex(predicate);
+
+				// The AssignRolesFromList function is called multiple times each with different list of players
+				// If our NetworkedPlayerInfo does not exist in this playerlist, then we shouldn't assign our role now
+				if(playerIndex == -1)
+				{
+					Hydra.Log.LogInfo("Our NetworkedPlayerInfo does not exist in this list, skipping");
+					return;
+				}
+
+				Hydra.Log.LogInfo($"Found our NetworkedPlayerInfo in the players list at index {playerIndex}, removing from the list");
+				players.RemoveAt(playerIndex);
+
+				Il2CppSystem.Predicate<RoleTypes> predicate2 = (Il2CppSystem.Predicate<RoleTypes>)(roleType => roleType == assignedRole);
+				int roleIndex = roleList.FindIndex(predicate2);
+
+				Hydra.Log.LogMessage($"Player index is {roleIndex}");
+
+				// If the role we want to assign ourselvex exists in the roleList, then remove it
+				// We don't want there to be four imposters in the game when we intend for three imposters
+				if(roleIndex != -1)
+				{
+					Hydra.Log.LogInfo($"Found an instance of our role in the roles list at index {roleIndex}, removing from the list");
+					roleList.RemoveAt(roleIndex);
+				}
+
+				PlayerControl.LocalPlayer.RpcSetRole(assignedRole);
+				rolesAssigned++;
+
+				Hydra.Log.LogInfo($"Assigned ourself the {assignedRole} role!");
 			}
 		}
 	}

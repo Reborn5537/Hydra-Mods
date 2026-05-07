@@ -127,9 +127,15 @@ namespace HydraMenu.ui.sections
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(5);
+			GUILayout.Label("Assign roles for next round:");
+			Host.AlwaysImposter.Enabled = GUILayout.Toggle(Host.AlwaysImposter.Enabled, "Enabled");
+			GUILayout.Label($"Role to assign: {Host.AlwaysImposter.assignedRole}");
+			Host.AlwaysImposter.assignedRole = Controls.HorizontalRoleSlider(Host.AlwaysImposter.assignedRole);
 
+			GUILayout.Space(5);
 			GUILayout.Label("Disco Party:");
 			Hydra.routines.discoHost.Enabled = GUILayout.Toggle(Hydra.routines.discoHost.Enabled, "Enabled");
+
 			GUILayout.Label($"Color randomization delay: {Hydra.routines.discoHost.randomizationDelay:F2}s");
 			Hydra.routines.discoHost.randomizationDelay = GUILayout.HorizontalSlider(Hydra.routines.discoHost.randomizationDelay, 0.1f, 2.0f);
 		}
