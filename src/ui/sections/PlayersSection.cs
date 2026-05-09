@@ -17,7 +17,7 @@ namespace HydraMenu.ui.sections
 
 		public static Vector2 PlayerPaneSize
 		{
-			get { return new Vector2(100, MainUI.windowSize.y - MainUI.HeaderSize.y); }
+			get { return new Vector2(100 * MainUI.scale, MainUI.WindowSize.y - MainUI.HeaderSize.y); }
 		}
 
 		public static Vector2 PlayerPanePosition
@@ -27,12 +27,12 @@ namespace HydraMenu.ui.sections
 
 		public static Vector2 PlayerButtonSize
 		{
-			get { return new Vector2(PlayerPaneSize.x, 30); }
+			get { return new Vector2(PlayerPaneSize.x, 30 * MainUI.scale); }
 		}
 
 		public static Vector2 PlayerOptionsSize
 		{
-			get { return new Vector2(MainUI.windowSize.x - MainUI.SectionListSize.x - PlayerPaneSize.x, MainUI.windowSize.y - MainUI.HeaderSize.y); }
+			get { return new Vector2(MainUI.WindowSize.x - MainUI.SectionListSize.x - PlayerPaneSize.x, MainUI.WindowSize.y - MainUI.HeaderSize.y); }
 		}
 
 		public static Vector2 PlayerOptionsPosition
@@ -42,7 +42,7 @@ namespace HydraMenu.ui.sections
 
 		public static Vector2 PlayerColorBoxSize
 		{
-			get { return new Vector2(5, PlayerButtonSize.y); }
+			get { return new Vector2(5 * MainUI.scale, PlayerButtonSize.y); }
 		}
 
 		public static PlayerControl selectedPlayer;

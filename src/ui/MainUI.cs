@@ -8,16 +8,21 @@ namespace HydraMenu.ui
 	{
 		// Current window
 		public bool visible = false;
-		public static Vector2 windowPosition = new Vector2(250, 100);
-		public static Vector2 windowSize = new Vector2(500, 470);
+		public static float scale = 1.0f;
 
 		private bool isDragging = false;
 		private Vector2 mouseDelta = new Vector2();
 
+		public static Vector2 windowPosition = new Vector2(250, 100);
+		public static Vector2 WindowSize
+		{
+			get { return new Vector2(500, 470) * scale; }
+		}
+
 		// UI Header
 		public static Vector2 HeaderSize
 		{
-			get { return new Vector2(windowSize.x, 20); }
+			get { return new Vector2(WindowSize.x, 20 * scale); }
 		}
 
 		public static Vector2 HeaderPosition
@@ -31,7 +36,7 @@ namespace HydraMenu.ui
 
 		public static Vector2 SectionListSize
 		{
-			get { return new Vector2(100, windowSize.y - HeaderSize.y); }
+			get { return new Vector2(100 * scale, WindowSize.y - HeaderSize.y); }
 		}
 
 		public static Vector2 SectionListPosition
@@ -41,13 +46,13 @@ namespace HydraMenu.ui
 
 		public static Vector2 SectionButtonSize
 		{
-			get { return new Vector2(SectionListSize.x, 25); }
+			get { return new Vector2(SectionListSize.x, 25 * scale); }
 		}
 
 		// Feature Pane
 		public static Vector2 FeaturePaneSize
 		{
-			get { return new Vector2(windowSize.x - SectionListSize.x, windowSize.y - HeaderSize.y); }
+			get { return new Vector2(WindowSize.x - SectionListSize.x, WindowSize.y - HeaderSize.y); }
 		}
 
 		public static Vector2 FeaturePanePosition
@@ -151,9 +156,9 @@ namespace HydraMenu.ui
 		{
 			return
 				mousePos.x >= windowPosition.x &&
-				mousePos.x <= (windowPosition.x + windowSize.x) &&
+				mousePos.x <= (windowPosition.x + WindowSize.x) &&
 				mousePos.y >= windowPosition.y &&
-				mousePos.y <= (windowPosition.y + windowSize.y);
+				mousePos.y <= (windowPosition.y + WindowSize.y);
 		}
 
 		private void RenderTab(byte position, ISection section)
