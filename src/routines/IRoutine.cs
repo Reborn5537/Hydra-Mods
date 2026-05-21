@@ -5,6 +5,6 @@
 		public virtual string RoutineName { get; set; } = "";
 		public virtual bool Enabled { get; set; } = false;
 
-		public virtual void Run() { }
+		public abstract void Run();
 	}
 }

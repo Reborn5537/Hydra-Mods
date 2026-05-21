@@ -7,6 +7,6 @@ namespace HydraMenu.ui.sections
 		public string name = "";
 		public Vector2 scrollVector;
 
-		public virtual void Render() { }
+		public abstract void Render();
 	}
 }
