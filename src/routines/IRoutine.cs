@@ -8,6 +8,7 @@
 			get { return _enabled; }
 			set {
 				if(value == _enabled) return;
+				_enabled = value;
 
 				if(value)
 				{
