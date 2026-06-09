@@ -49,10 +49,11 @@ namespace HydraMenu
 		public static Dictionary<string, SystemTypes> polusDoors = new Dictionary<string, SystemTypes>()
 		{
 			{ "Office", SystemTypes.Office },
+			{ "Communications", SystemTypes.Comms },
 			{ "Laboratory", SystemTypes.Laboratory },
+			{ "Decontamination", SystemTypes.Decontamination },
 			{ "Electrical", SystemTypes.Electrical },
 			{ "Oxygen", SystemTypes.LifeSupp },
-			{ "Communications", SystemTypes.Comms },
 			{ "Weapons", SystemTypes.Weapons },
 			{ "Storage", SystemTypes.Storage }
 		};
@@ -342,7 +343,6 @@ namespace HydraMenu
 
 		public static void UnlockAll()
 		{
-			// 'AllDoors' also includes entries for Polus' decontamination doors, funnily enough
 			for(byte i = 0; i < ShipStatus.Instance.AllDoors.Count; i++)
 			{
 				UnlockDoor(ShipStatus.Instance.AllDoors[i], i);

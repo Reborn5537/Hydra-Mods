@@ -46,7 +46,9 @@ namespace HydraMenu.ui.sections
 				{
 					Sabotage.UnlockAll();
 					Hydra.notifications.Send("Sabotage", "All doors have been unlocked.", 5);
-				} else {
+				}
+				else
+				{
 					Hydra.notifications.Send("Sabotage", "The map you are currently on does not support unlocking doors.", 10);
 				}
 			}
