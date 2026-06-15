@@ -226,7 +226,7 @@ namespace HydraMenu
 			// On vanilla lobbies, NetworkedPlayerInfo net objects are owned by the backend among us servers (-4)
 			// If our NetworkedPlayerInfo net object is owned by the host, we can assume that the lobby has a lax anticheat without server authority
 			// which does not require us to use any sort of bypasses
-			return PlayerControl.LocalPlayer.Data.OwnerId == -4;
+			return PlayerControl.LocalPlayer.Data.OwnerId != -2;
 		}
 
 		public static string GetPlayerColor(NetworkedPlayerInfo player)
